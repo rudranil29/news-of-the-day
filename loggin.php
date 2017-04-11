@@ -11,9 +11,10 @@ if(isset($_POST['btn-login']))
   $sql=mysql_query("SELECT * FROM users WHERE email='".$mail."'");
   $sql_row= mysql_num_rows($sql);
   $get_value= mysql_fetch_assoc($sql);
+  $get_user_id=$get_value['user_id'];
   $get_mail= $get_value['email'];
   $get_pass= $get_value['password'];
-  $get_role_id= $get_value['role_id'];
+  $get_role_id=$get_value['role_id'];
 
   if($sql_row>0)
    {
@@ -23,6 +24,7 @@ if(isset($_POST['btn-login']))
             {
               if($get_role_id==1)
               {
+                  $_SESSION['user_id']= $get_user_id;
                   $_SESSION['mail']= $get_mail;
                   header('location:adminhome.php?msg=successful');
               }

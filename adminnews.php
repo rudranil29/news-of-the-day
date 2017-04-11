@@ -30,9 +30,11 @@ if(!isset($_SESSION['mail']))
 }
 else{
 $show_mail=$_SESSION['mail'];
+$user_id=$_SESSION['user_id'];
 if(isset($show_mail)){
 $userin= "welcome " .$show_mail;
 //echo $userin;
+//echo $user_id;
 }
 else {
   echo "problem in session";
@@ -76,23 +78,42 @@ else {
 <div class="container">
 <?php
 	$xml=simplexml_load_file("https://news.google.co.in/news?cf=all&hl=en&pz=1&ned=in&topic=tc&output=rss");
-	foreach ($xml->channel->item as $itm) {
+	foreach ($xml->channel->item as $itm)
+	{
 		$title = $itm->title;
 		$link = $itm->link;
 		$pubdate= $itm->pubDate;
 		$description = $itm->description;
 
-		  $sql=mysql_query("SELECT * FROM news WHERE title='".$title."'");
-			$sql_row= mysql_num_rows($sql);
-			$get_value= mysql_fetch_assoc($sql);
-			$get_title= $get_value['title'];
-			if(strcasecmp($get_title,$title)!=0)
+		  $sql=mysql_query("SELECT * FROM news WHERE title='$title'");
+			 $sql_row=mysql_num_rows($sql);
+			if($sql_row>0)
 			{
-				$sql = mysql_query("INSERT INTO news (title,link,description,pubdate)
-				VALUES ('".$title."','".$link."','".$description."','".$pubdate."')");
+
+			}
+			else
+			{
+			 	$sql = mysql_query("INSERT INTO news (title,link,description,pubdate)
+			 	VALUES ('".$title."','".$link."','".$description."','".$pubdate."')");
 			}
 	}
- ?>
+	 $query = mysql_query("SELECT * from news");
+	 echo '<ul class="list-group">';
+	 while($rows = mysql_fetch_array($query))
+	 {
+       $title = $rows['title'];
+       $link = $rows['link'];
+       $description = $rows['description'];
+       $pubdate = $rows['pubdate'];
+       echo '<li class="list-group-item"><a href="'.$link.'">'.$title.'</a> <hr>'.$description.'<br>'.$pubdate.'</li>';
+       $result= mysql_query("select * from likes where user_id=$user_id and news_id=".$row['news_id']."");
+			 	if(mysql_num_rows($result)==1){?>
+			 	<span><a href="" class="unlike" id="<?php echo $row['news_id']; ?>">unlike</a></span>
+			 	<?php } else {?>
+					<span><a href="" class="like" id="<?php echo $row['news_id'];?>">like</a></span>
+					<?php }?>
+    <?php }
+     echo '</ul>'?>
 </div>
 <footer class="footer-distributed">
 
@@ -148,6 +169,6 @@ else {
 
 		</footer>
 <script src="js/bootstrap.min.js"></script>
-<script src="js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="js/jquery-2.1.1.js"></script>
 </body>
 </html>

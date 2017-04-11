@@ -27,9 +27,11 @@ if(!isset($_SESSION['mail']))
 }
 else{
 $show_mail=$_SESSION['mail'];
+$user_id=$_SESSION['user_id'];
 if(isset($show_mail)){
 $userin= "welcome " .$show_mail;
 //echo $userin;
+//echo $user_id;
 }
 else {
   echo "problem in session";
