@@ -1,6 +1,30 @@
 <html>
 <?php
 include 'dbconfig.php';
+
+if(isset($_POST['liked'])){
+
+	$postid=$_POST['postid'];
+	$result=mysql_query("select * from posts where id=$postid");
+	$row=mysql_fetch_array($result);
+	$n=$row['likes'];
+
+	mysql_query("update posts set likes=$n+1 where id=$postid");
+	mysql_query("insert into likes(userid, postid) values(2,$postid)");
+	exit();
+}
+if(isset($_POST['unliked'])){
+
+	$postid=$_POST['postid'];
+	$result=mysql_query("select * from posts where id=$postid");
+	$row=mysql_fetch_array($result);
+	$n=$row['likes'];
+
+	mysql_query("update posts set likes=$n-1 where id=$postid");
+	mysql_query("delete from likes where postid=$postid and userid=2");
+	exit();
+}
+
  ?>
 <head>
 	<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
@@ -84,12 +108,10 @@ else {
 		$link = $itm->link;
 		$pubdate= $itm->pubDate;
 		$description = $itm->description;
-
 		  $sql=mysql_query("SELECT * FROM news WHERE title='$title'");
 			 $sql_row=mysql_num_rows($sql);
 			if($sql_row>0)
 			{
-
 			}
 			else
 			{
